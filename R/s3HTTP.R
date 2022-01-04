@@ -20,7 +20,7 @@
 #' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, an attempt is made to locate it from credentials. Defaults to \dQuote{us-east-1} if all else fails. Should be set to \code{""} when using non-AWS endpoints that don't include regions (and \code{base_url} must be set).
 #' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \env{AWS_ACCESS_KEY_ID}.
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \env{AWS_SECRET_ACCESS_KEY}.
-#' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.
+#' @param security_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.
 #' @param use_https Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
@@ -28,7 +28,7 @@
 #' @importFrom xml2 read_xml as_list
 #' @importFrom utils URLencode
 #' @importFrom curl handle_setheaders new_handle curl
-#' @import aws.signature
+#' @import oss.signature
 #' @export
 s3HTTP <- 
 function(verb = "GET",
@@ -44,21 +44,21 @@ function(verb = "GET",
          parse_response = TRUE, 
          check_region = FALSE,
          url_style = c("path", "virtual"),
-         base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
+         base_url = Sys.getenv("AWS_S3_ENDPOINT", "oss.aliyuncs.com"),
          verbose = getOption("verbose", FALSE),
          show_progress = getOption("verbose", FALSE),
          region = NULL, 
          key = NULL, 
          secret = NULL, 
-         session_token = NULL,
+         security_token = NULL,
          use_https = TRUE,
          ...) {
     
     # locate and validate credentials
-    credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
+    credentials <- oss.signature::locate_credentials(key = key, secret = secret, security_token = security_token, region = region, verbose = verbose)
     key <- credentials[["key"]]
     secret <- credentials[["secret"]]
-    session_token <- credentials[["session_token"]]
+    security_token <- credentials[["security_token"]]
     ## allow region="" to override any config - the only way to use 3rd party URLs without region
     region <- if (length(region) && !nzchar(region)) region else credentials[["region"]]
     
@@ -90,18 +90,12 @@ function(verb = "GET",
     
     # validate arguments and setup request URL
     current <- Sys.time()
-    d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
-    
     url_style <- match.arg(url_style)
     url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose, use_https = use_https)
     p <- httr::parse_url(url)
-    action <- if (p$path == "") "/" else paste0("/", p$path)
     hostname <- paste(p$hostname, p$port, sep=ifelse(length(p$port), ":", ""))
     
     # parse headers
-    canonical_headers <- c(list(host = hostname,
-                                `x-amz-date` = d_timestamp), headers)
-    headers[["x-amz-date"]] <- d_timestamp
     # parse query arguments
     if (is.null(query) && !is.null(p$query)) {
         query <- p[["query"]]
@@ -120,39 +114,27 @@ function(verb = "GET",
         if (isTRUE(verbose))
             message("Executing request with AWS credentials")
 
-        ## we need to augment canonical headers with
-        ## x-amz-content-sha256 since signature_v4_auth() doesn't do it
-        ## the following is what signature_v4_auth() does and it's terribly fragile!
-        ## We really need to convince them that using conditionals on file presence is really, really bad!
-        ## But for compatibility we keep it until fixed...
-        body_hash <- tolower(digest::digest(request_body,
-                                            file = is.character(request_body) && file.exists(request_body),
-                                            algo = "sha256", serialize = FALSE))
-
-        canonical_headers[["x-amz-content-sha256"]] <-
-            headers[["x-amz-content-sha256"]] <- body_hash
-
-        Sig <- aws.signature::signature_v4_auth(
-               datetime = d_timestamp,
-               region = region,
-               service = "s3",
-               # For s3connection() we hack the 'verb' argument. It's otherwise a GET request.
-               verb = if (verb == "connection") "GET" else verb,
-               action = action,
-               query_args = query,
-               canonical_headers = canonical_headers,
-               request_body = request_body,
-               key = key,
-               secret = secret,
-               session_token = session_token,
-               verbose = verbose)
-        if (!is.null(session_token) && session_token != "") {
-            headers[["x-amz-security-token"]] <- session_token
+        Sig <- oss.signature::signature_v1_auth(
+                datetime = current,
+                region = region,
+                headers = headers,
+                # For s3connection() we hack the 'verb' argument. It's otherwise a GET request.
+                verb = if (verb == "connection") "GET" else verb,
+                query_args = query,
+                bucket = bucket,
+                path = path,
+                key = key,
+                secret = secret,
+                security_token = security_token,
+                verbose = verbose)
+        if (!is.null(security_token) && security_token != "") {
+            headers[["x-oss-security-token"]] <- security_token
         }
         headers[["Authorization"]] <- Sig[["SignatureHeader"]]
     }
+    headers[["Date"]] <- format(
+      current, "%a, %d %b %Y %H:%M:%S GMT", tz = "GMT")
     H <- do.call(httr::add_headers, headers)
-    
     # execute request
     if (verb == "GET") {
         # GET verb
@@ -220,7 +202,6 @@ function(verb = "GET",
         # OPTIONS verb
         r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
-    
     # handle response, failing if HTTP error occurs
     if (isTRUE(parse_response)) {
         out <- parse_aws_s3_response(r, Sig, verbose = verbose)
@@ -253,7 +234,6 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     if (httr::http_error(r) | (httr::http_status(r)[["category"]] == "Redirection")) {
         h <- httr::headers(r)
         out <- structure(response, headers = h, class = "aws_error")
-        attr(out, "request_canonical") <- Sig$CanonicalRequest
         attr(out, "request_string_to_sign") <- Sig$StringToSign
         attr(out, "request_signature") <- Sig$SignatureHeader
         print(out)
@@ -263,23 +243,22 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
 }
 
 setup_s3_url <- 
-function(bucketname, 
-         region, 
-         path, 
-         accelerate = FALSE, 
+function(bucketname,
+         region,
+         path,
+         accelerate = FALSE,
          dualstack = FALSE,
-         url_style = c("path", "virtual"), 
+         url_style = "virtual",
          base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
          verbose = getOption("verbose", FALSE),
-         use_https = TRUE) 
+         use_https = TRUE)
 {
     # Figure out 'path' or 'virtual' style. Default is 'path'.
     url_style <- match.arg(url_style)
-    
     # handle S3-compatible storage URLs
-    if (base_url != "s3.amazonaws.com") {
+    if (base_url != "oss.aliyuncs.com") {
         if (isTRUE(verbose)) {
-            message("Non-AWS base URL requested.")
+            message("Non-OSS base URL requested.")
         }
         accelerate <- FALSE
         dualstack <- FALSE
@@ -295,10 +274,10 @@ function(bucketname,
             url_style <- "virtual"
         }
         # handle region
-        if (is.null(region) || region %in% c("us-east-1", "")) {
+        if (is.null(region) || region %in% c("cn-hangzhou", "")) {
             if (is.null(region) || region == "") {
                 if (isTRUE(verbose)) {
-                    message("Option 'region' is missing, so 'us-east-1' assumed.")
+                    message("Option 'region' is missing, so 'cn-hangzhou' assumed.")
                 }
             }
             # handle dualstack
@@ -314,7 +293,7 @@ function(bucketname,
                 if (isTRUE(accelerate)) {
                     base_url <- "s3-accelerate.amazonaws.com"
                 } else {
-                    base_url <- "s3.amazonaws.com"
+                    base_url <- "oss.aliyuncs.com"
                 }
             }
         } else {
@@ -331,7 +310,7 @@ function(bucketname,
                 if (isTRUE(accelerate)) {
                     base_url <- paste0("s3-accelerate.amazonaws.com")
                 } else {
-                    base_url <- paste0("s3-", region, ".amazonaws.com")
+                    base_url <- paste0("oss-", region, ".aliyuncs.com")
                 }
             }
         }
@@ -356,7 +335,7 @@ function(bucketname,
             url <- paste0(prefix, bucketname, ".", base_url)
         } else {
             # path-style URL (the default)
-            url <- paste0(prefix, base_url, "/", bucketname)
+            stop("OSS仅支持virtual-style url")
         }
     }
     

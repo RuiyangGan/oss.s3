@@ -13,7 +13,7 @@
 #'   put_bucket("examplebucket")
 #'   
 #'   # set a "canned" ACL to, e.g., make bucket publicly readable
-#'   put_bucket("examplebucket", headers = list(`x-amz-acl` = "public-read")
+#'   put_bucket("examplebucket", headers = list(`x-oss-acl` = "public-read")
 #' 
 #' }
 #' @references 
@@ -31,13 +31,13 @@ function(bucket,
          headers = list(),
          ...){
     
-    if (!is.null(location_constraint) && location_constraint != "us-east-1") {
+    if (!is.null(location_constraint) && location_constraint != "cn-hangzhou") {
         bod <- paste0('<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>',
                     location_constraint, '</LocationConstraint></CreateBucketConfiguration>')
     } else {
         bod <- ""
     }
-    headers <- c(list(`x-amz-acl` = match.arg(acl)), headers)
+    headers <- c(list(`x-oss-acl` = match.arg(acl)), headers)
     ir <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 request_body = bod,

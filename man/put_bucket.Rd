@@ -41,7 +41,7 @@ Bucket policies regulate who has what access to a bucket and its contents. The \
   put_bucket("examplebucket")
   
   # set a "canned" ACL to, e.g., make bucket publicly readable
-  put_bucket("examplebucket", headers = list(`x-amz-acl` = "public-read")
+  put_bucket("examplebucket", headers = list(`x-oss-acl` = "public-read")
 
 }
 }

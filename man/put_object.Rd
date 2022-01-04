@@ -86,7 +86,7 @@ When using connections in \code{what} it is preferrable that they are either uno
   ## require appropriate bucket policy
   ## encryption can also be set at the bucket-level using \code{\link{put_encryption}}
   put_object(file = tmp, object = "mtcars.csv", bucket = "myexamplebucket",
-             headers = c('x-amz-server-side-encryption' = 'AES256'))
+             headers = c('x-oss-server-side-encryption' = 'AES256'))
 
   # alternative "S3 URI" syntax:
   put_object(rawConnectionValue(x), object = "s3://myexamplebucketname/mtcars.csv")
