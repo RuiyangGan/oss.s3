@@ -3,7 +3,7 @@
 #' @description List buckets as a data frame
 #' @param add_region A logical (by default \code{FALSE}) indicating whether to add \dQuote{Region} column to the output data frame. This simply induces a loop over \code{\link{get_location}} for each bucket.
 #' @template dots
-#' @details \code{bucketlist} performs a GET operation on the base s3 endpoint and returns a list of all buckets owned by the authenticated sender of the request. If authentication is successful, this function provides a list of buckets available to the authenticated user. In this way, it can serve as a \dQuote{hello world!} function, to confirm that one's authentication credentials are working correctly.
+#' @details \code{bucketlist} performs a GET operation on the base oss endpoint and returns a list of all buckets owned by the authenticated sender of the request. If authentication is successful, this function provides a list of buckets available to the authenticated user. In this way, it can serve as a \dQuote{hello world!} function, to confirm that one's authentication credentials are working correctly.
 #' 
 #' \code{bucket_list_df} and \code{bucketlist} are identical.
 #' @return A data frame of buckets. Can be empty (0 rows, 0 columns) if there are no buckets, otherwise contains typically at least columns \code{Bucket} and \code{CreationDate}.

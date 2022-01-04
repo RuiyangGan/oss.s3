@@ -47,7 +47,7 @@
 #'   ## require appropriate bucket policy
 #'   ## encryption can also be set at the bucket-level using \code{\link{put_encryption}}
 #'   put_object(file = tmp, object = "mtcars.csv", bucket = "myexamplebucket",
-#'              headers = c('x-amz-server-side-encryption' = 'AES256'))
+#'              headers = c('x-oss-server-side-encryption' = 'AES256'))
 #' 
 #'   # alternative "S3 URI" syntax:
 #'   put_object(rawConnectionValue(x), object = "s3://myexamplebucketname/mtcars.csv")
@@ -159,12 +159,12 @@ function(
         multipart <- FALSE
     }
 
-    if (!"x-amz-acl" %in% names(headers)) {
+    if (!"x-oss-acl" %in% names(headers)) {
         if (!is.null(acl)) {
-            acl <- match.arg(acl, c("private", "public-read", "public-read-write", "aws-exec-read", "authenticated-read", "bucket-owner-read", "bucket-owner-full-control"))
-            headers <- c(headers, list(`x-amz-acl` = acl))
+            acl <- match.arg(acl, c("private", "public-read", "public-read-write", "authenticated-read", "bucket-owner-read", "bucket-owner-full-control"))
+            headers <- c(headers, list(`x-oss-acl` = acl))
         } else {
-            headers <- c(headers, list(`x-amz-acl` = "private"))
+            headers <- c(headers, list(`x-oss-acl` = "private"))
         }
     }
 

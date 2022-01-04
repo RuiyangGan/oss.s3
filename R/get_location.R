@@ -14,7 +14,7 @@ get_location <- function(bucket, ...){
                 check_region = FALSE,
                 ...)
     if (!length(r)) {
-        return("us-east-1")
+        return("cn-hangzhou")
     } else {
         return(r[[1L]])
     }

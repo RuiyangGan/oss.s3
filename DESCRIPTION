@@ -1,6 +1,6 @@
-Package: aws.s3
+Package: oss.s3
 Type: Package
-Title: 'AWS S3' Client Package
+Title: Aliyun 'OSS' Client Package
 Version: 0.3.22
 Authors@R: c(person("Thomas J.", "Leeper", role = "aut",
                     email = "thosjleeper@gmail.com",
@@ -19,11 +19,12 @@ Authors@R: c(person("Thomas J.", "Leeper", role = "aut",
                     email = "simon.urbanek@R-project.org")
 	     )
 Maintainer: Simon Urbanek <simon.urbanek@R-project.org>
-Description: A simple client package for the Amazon Web Services ('AWS') Simple
-    Storage Service ('S3') 'REST' 'API' <https://aws.amazon.com/s3/>.
+Description: A simple client package for the Alibaba Cloud ('Aliyun')
+   Object Storage Service ('OSS') 'REST' 'API' 
+   <https://www.aliyun.com/product/oss>.
 License: GPL (>= 2)
-URL: https://github.com/cloudyr/aws.s3
-BugReports: https://github.com/cloudyr/aws.s3/issues
+URL: https://github.com/RuiyangGan/oss.s3
+BugReports: https://github.com/RuiyangGan/oss.s3/issues
 Encoding: UTF-8
 Imports:
     utils,
@@ -37,4 +38,4 @@ Imports:
 Suggests:
     testthat,
     datasets
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.2

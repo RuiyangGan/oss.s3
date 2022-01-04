@@ -1,9 +1,9 @@
-#' @name aws.s3-package
-#' @title aws.s3-package
-#' @aliases aws.s3-package aws.s3
+#' @name oss.s3-package
+#' @title oss.s3-package
+#' @aliases oss.s3-package oss.s3
 #' @docType package
-#' @description AWS S3 Client Package
-#' @details A simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API.
+#' @description Aliyun OSS Client Package
+#' @details A simple client package for the Alibaba Cloud (Aliyun) Object Storage Service (OSS) REST API.
 #' @author Thomas J. Leeper <thosjleeper@gmail.com>
 #' @keywords package 
 NULL

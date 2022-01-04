@@ -18,13 +18,13 @@ s3HTTP(
   parse_response = TRUE,
   check_region = FALSE,
   url_style = c("path", "virtual"),
-  base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
+  base_url = Sys.getenv("AWS_S3_ENDPOINT", "oss.aliyuncs.com"),
   verbose = getOption("verbose", FALSE),
   show_progress = getOption("verbose", FALSE),
   region = NULL,
   key = NULL,
   secret = NULL,
-  session_token = NULL,
+  security_token = NULL,
   use_https = TRUE,
   ...
 )
@@ -68,7 +68,7 @@ s3HTTP(
 
 \item{secret}{A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \env{AWS_SECRET_ACCESS_KEY}.}
 
-\item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.}
+\item{security_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.}
 
 \item{use_https}{Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.}
 

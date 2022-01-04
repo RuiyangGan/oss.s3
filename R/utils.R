@@ -48,7 +48,7 @@ get_region.default <- function(x, ...) {
 }
 
 get_region.s3_bucket <- function(x, ...) {
-    region <- attributes(x)[["x-amz-bucket-region"]]
+    region <- attributes(x)[["x-oss-bucket-region"]]
     if (is.null(region)) {
         region <- get_location(bucket = attributes(x)[["Name"]], ...)
     }
