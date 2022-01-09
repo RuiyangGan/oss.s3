@@ -1,8 +1,11 @@
 Package: oss.s3
 Type: Package
 Title: Aliyun 'OSS' Client Package
-Version: 0.3.22
-Authors@R: c(person("Thomas J.", "Leeper", role = "aut",
+Version: 0.0.0-9000
+Authors@R: c(person("Ruiyang", "Gan", role = "aut",
+                    email = "ganruiyang@metrodata.cn",
+                    comment = c(ORCID = "0000-0003-4097-6326")),
+            c(person("Thomas J.", "Leeper", role = "aut",
                     email = "thosjleeper@gmail.com",
                     comment = c(ORCID = "0000-0003-4097-6326")),
              person("Boettiger", "Carl", role = "ctb"),
@@ -18,7 +21,7 @@ Authors@R: c(person("Thomas J.", "Leeper", role = "aut",
              person("Simon", "Urbanek", role = c("cre", "ctb"),
                     email = "simon.urbanek@R-project.org")
 	     )
-Maintainer: Simon Urbanek <simon.urbanek@R-project.org>
+Maintainer: Ruiyang Gan <ganruiyang@metrodata.cn>
 Description: A simple client package for the Alibaba Cloud ('Aliyun')
    Object Storage Service ('OSS') 'REST' 'API' 
    <https://www.aliyun.com/product/oss>.
@@ -34,7 +37,7 @@ Imports:
     xml2 (> 1.0.0),
     base64enc,
     digest,
-    aws.signature (>= 0.3.7)
+    oss.signature
 Suggests:
     testthat,
     datasets
