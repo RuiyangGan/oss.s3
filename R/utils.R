@@ -2,7 +2,7 @@
 #' @title Utility Functions
 #' @description Some utility functions for working with S3 objects and buckets
 
-#' @param x An object, typically a string (can be s3://.. URL) or S3 bucket object
+#' @param x An object, typically a string (can be oss://.. URL) or S3 bucket object
 #' @param \dots Ignored.
 #' @return \code{get_bucketname} returns a character string with the name of the bucket.
 #' @export
@@ -13,7 +13,7 @@ get_bucketname <- function(x, ...) {
 #' @rdname utilities
 #' @export
 get_bucketname.character <- function(x, ...) {
-    url <- grepl("^s3://", x, TRUE)
+    url <- grepl("^oss://", x, TRUE)
     res <- x
     if (any(url))
         res[url] <- gsub("/.*", "", substring(x[url], 6, nchar(x[url])))
@@ -58,8 +58,8 @@ get_region.s3_bucket <- function(x, ...) {
 
 # get_objectkey
 #' @rdname utilities
-#' @param x S3 object, s3:// URL or a string
-#' @return \code{get_objectkey} returns a character string with S3 key which is the part excluding bucket name and leading slashes
+#' @param x S3 object, oss:// URL or a string
+#' @return \code{get_objectkey} returns a character string with OSS key which is the part excluding bucket name and leading slashes
 #' @export
 get_objectkey <- function(x, ...) {
     UseMethod("get_objectkey")
@@ -68,11 +68,11 @@ get_objectkey <- function(x, ...) {
 #' @rdname utilities
 #' @export
 get_objectkey.character <- function(x, ...) {
-    url <- grepl("^s3://", x, TRUE)
+    url <- grepl("^oss://", x, TRUE)
     ret <- x
     if (any(url)) {
-        ## remove s3://
-        ret[url] <- substring(x[url], 6, nchar(x[url]))
+        ## remove oss://
+        ret[url] <- substring(x[url], 7, nchar(x[url]))
         ## remove bucket name
         y <- sub("^[^/]*/", "", ret[url])
         ## if there was no / the key is empty (just a bucket)

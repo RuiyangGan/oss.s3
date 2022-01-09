@@ -214,9 +214,9 @@ function(
             if (length(data) == 0) ## end of payload
                 break
 
-            r <- s3HTTP(verb = "PUT", 
+            r <- s3HTTP(verb = "PUT",
                         bucket = bucket,
-                        path = paste0('/', object),
+                        path = object,
                         query = list(partNumber = i, uploadId = id),
                         request_body = data,
                         verbose = verbose,
@@ -271,10 +271,10 @@ function(
         }
     }
 
-    r <- s3HTTP(verb = "PUT", 
+    r <- s3HTTP(verb = "PUT",
                 bucket = bucket,
-                path = paste0('/', object),
-                headers = headers, 
+                path = object,
+                headers = headers,
                 request_body = what,
                 verbose = verbose,
                 show_progress = show_progress,
@@ -303,10 +303,10 @@ post_object <- function(file, object, bucket, headers = list(), ...) {
     if (!"Content-Length" %in% names(headers)) {
         headers <- c(headers, list(`Content-Length` = formatSize(calculate_data_size(file))))
     }
-    r <- s3HTTP(verb = "POST", 
+    r <- s3HTTP(verb = "POST",
                 bucket = bucket,
-                path = paste0("/", object),
-                headers = headers, 
+                path = object,
+                headers = headers,
                 request_body = file,
                 ...)
     structure(r, class = "s3_object")

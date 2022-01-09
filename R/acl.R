@@ -22,7 +22,7 @@ get_acl <- function(object, bucket, ...) {
         }
         object <- get_objectkey(object)
         r <- s3HTTP(verb = "GET", 
-                    path = paste0('/', object),
+                    path = object,
                     bucket = bucket,
                     query = list(acl = ""),
                     parse_response = FALSE,
@@ -83,14 +83,14 @@ function(
         if (is.null(body)) {
             r <- s3HTTP(verb = "PUT", 
                     bucket = bucket,
-                    path = paste0("/", object),
+                    path = object,
                     headers = headers,
                     request_body = "",
                     ...)
         } else {
             r <- s3HTTP(verb = "PUT", 
                     bucket = bucket,
-                    path = paste0("/", object),
+                    path = object,
                     headers = headers,
                     request_body = body,
                     ...)

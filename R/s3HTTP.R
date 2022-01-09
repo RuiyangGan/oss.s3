@@ -32,28 +32,28 @@
 #' @export
 s3HTTP <- 
 function(verb = "GET",
-         bucket = "", 
-         path = "", 
+         bucket = "",
+         path = "",
          query = NULL,
-         headers = list(), 
+         headers = list(),
          request_body = "",
          write_disk = NULL,
          write_fn = NULL,
          accelerate = FALSE,
          dualstack = FALSE,
-         parse_response = TRUE, 
+         parse_response = TRUE,
          check_region = FALSE,
          url_style = c("path", "virtual"),
          base_url = Sys.getenv("AWS_S3_ENDPOINT", "oss.aliyuncs.com"),
          verbose = getOption("verbose", FALSE),
          show_progress = getOption("verbose", FALSE),
-         region = NULL, 
-         key = NULL, 
-         secret = NULL, 
+         region = NULL,
+         key = NULL,
+         secret = NULL,
          security_token = NULL,
          use_https = TRUE,
          ...) {
-    
+
     # locate and validate credentials
     credentials <- oss.signature::locate_credentials(key = key, secret = secret, security_token = security_token, region = region, verbose = verbose)
     key <- credentials[["key"]]
