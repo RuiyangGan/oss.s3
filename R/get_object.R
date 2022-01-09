@@ -86,9 +86,9 @@ function(object,
         bucket <- get_bucketname(object)
     } 
     object <- get_objectkey(object)
-    r <- s3HTTP(verb = "GET", 
+    r <- s3HTTP(verb = "GET",
                 bucket = bucket,
-                path = paste0("/", object),
+                path = object,
                 headers = headers,
                 parse_response = parse_response,
                 ...)
@@ -118,9 +118,9 @@ function(object,
     }
     
     # use httr::write_disk() to write directly to disk
-    r <- s3HTTP(verb = "GET", 
+    r <- s3HTTP(verb = "GET",
                 bucket = bucket,
-                path = paste0("/", object),
+                path = object,
                 headers = headers,
                 write_disk = httr::write_disk(path = file, overwrite = overwrite),
                 ...)
@@ -145,7 +145,7 @@ function(
     
     r <- s3HTTP(verb = "POST", 
                 bucket = bucket,
-                path = paste0("/", object),
+                path = object,
                 headers = headers,
                 query = list(select = "", "select-type" = "2"),
                 request_body = request_body,
@@ -172,8 +172,8 @@ get_torrent <- function(object, bucket, ...) {
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = paste0("/", object),
-                query = list(torrent =""),
+                path = object,
+                query = list(torrent = ""),
                 ...)
     return(content(r, "raw"))
 }
@@ -191,7 +191,7 @@ function(object,
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "connection",
                 bucket = bucket,
-                path = paste0("/", object),
+                path = object,
                 headers = headers,
                 ...)
     return(r)

@@ -20,7 +20,7 @@ copy_object <- function(from_object, to_object = from_object, from_bucket, to_bu
     to_object <- get_objectkey(to_object)
     r <- s3HTTP(verb = "PUT", 
                 bucket = to_bucket,
-                path = paste0("/", to_object),
+                path = to_object,
                 headers = c(headers, 
                             `x-oss-copy-source` = paste0("/",from_bucket,"/",from_object)), 
                 ...)

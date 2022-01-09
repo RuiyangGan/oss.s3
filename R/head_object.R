@@ -39,7 +39,7 @@ head_object <- function(object, bucket, ...) {
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "HEAD", 
                 bucket = bucket,
-                path = paste0("/", object),
+                path = object,
                 ...)
     structure(r)
 }

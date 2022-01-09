@@ -22,7 +22,7 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
     if (length(object) == 1) {
         r <- s3HTTP(verb = "DELETE", 
                     bucket = bucket,
-                    path = paste0("/", object),
+                    path = object,
                     ...)
         return(TRUE)
     } else {
