@@ -274,11 +274,9 @@ function(bucketname,
             url_style <- "virtual"
         }
         # handle region
-        if (is.null(region) || region %in% c("cn-hangzhou", "")) {
-            if (is.null(region) || region == "") {
-                if (isTRUE(verbose)) {
-                    message("Option 'region' is missing, so 'cn-hangzhou' assumed.")
-                }
+        if (is.null(region) || region == "") {
+            if (isTRUE(verbose)) {
+                message("Option 'region' is missing, so 'cn-hangzhou' assumed.")
             }
             # handle dualstack
             if (isTRUE(dualstack)) {
@@ -293,7 +291,7 @@ function(bucketname,
                 if (isTRUE(accelerate)) {
                     base_url <- "s3-accelerate.amazonaws.com"
                 } else {
-                    base_url <- "oss.aliyuncs.com"
+                    base_url <- "oss-cn-hangzhou.aliyuncs.com"
                 }
             }
         } else {
