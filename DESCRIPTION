@@ -1,11 +1,10 @@
 Package: oss.s3
 Type: Package
 Title: Aliyun 'OSS' Client Package
-Version: 0.0.0-9000
+Version: 0.0.1
 Authors@R: c(person("Ruiyang", "Gan", role = "aut",
-                    email = "ganruiyang@metrodata.cn",
-                    comment = c(ORCID = "0000-0003-4097-6326")),
-            c(person("Thomas J.", "Leeper", role = "aut",
+                    email = "ganruiyang@outlook.com"),
+            person("Thomas J.", "Leeper", role = "aut",
                     email = "thosjleeper@gmail.com",
                     comment = c(ORCID = "0000-0003-4097-6326")),
              person("Boettiger", "Carl", role = "ctb"),
